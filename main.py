@@ -85,7 +85,6 @@ def display_menu():
                     print(f"{GREEN}Malware Signature: 0/68 Flagged Engines{RESET}")
                     print(f"{GREEN}Scan Status: SAFE SITE{RESET}")
                 print(f"{PURPLE}----------------------------{RESET}")
-                
             # --- OPTION 3: SOCIALS COUNTRY TRACKER ---
             elif option == "03" or option == "3":
                 social_platform = input("Social: ")
@@ -103,21 +102,39 @@ def display_menu():
                 print(f"{GREEN}Account Handle:{RESET} @{username}")
                 
                 u_lower = username.lower()
-                if any(k in u_lower for k in ["uk", "london", "gb"]):
-                    country = "United Kingdom (UK)"
-                    timezone = "GMT +0 / +1"
-                elif any(k in u_lower for k in ["ca", "toronto", "maple"]):
-                    country = "Canada"
-                    timezone = "EST / PST"
-                elif any(k in u_lower for k in ["au", "sydney", "oz"]):
-                    country = "Australia"
-                    timezone = "AEST (GMT+10)"
-                elif any(k in u_lower for k in ["de", "berlin"]):
-                    country = "Germany"
-                    timezone = "CET (GMT+1)"
-                else:
-                    country = "United States (US)"
-                    timezone = "EST (GMT-5)"
+                
+                # Global lookup matrix mapping unique text markers to physical countries
+                country_map = {
+                    "Philippines (PH)": (["ph", "manila", "pinoy", "phil", "cavite", "cebu"], "PST (GMT+8)"),
+                    "United Kingdom (UK)": (["uk", "london", "gb", "brit", "scot"], "GMT +0 / +1"),
+                    "Canada": (["ca", "toronto", "maple", "vancouver"], "EST / PST"),
+                    "Australia": (["au", "sydney", "oz", "melbourne"], "AEST (GMT+10)"),
+                    "Germany": (["de", "berlin", "munich", "deutsch"], "CET (GMT+1)"),
+                    "Japan": (["jp", "tokyo", "osaka", "kyoto", "nip"], "JST (GMT+9)"),
+                    "Russia": (["ru", "moscow", "rus", "soviet"], "MSK (GMT+3)"),
+                    "France": (["fr", "paris", "lyon", "french"], "CET (GMT+1)"),
+                    "Brazil": (["br", "rio", "sao", "brazil"], "BRT (GMT-3)"),
+                    "India": (["in", "delhi", "mumbai", "india", "ind"], "IST (GMT+5:30)"),
+                    "China": (["cn", "beijing", "shanghai", "china"], "CST (GMT+8)"),
+                    "South Korea": (["kr", "seoul", "korea"], kst := "KST (GMT+9)"),
+                    "Mexico": (["mx", "mexico", "mex"], "CST (GMT-6)"),
+                    "Italy": (["it", "rome", "milan", "italy"], "CET (GMT+1)"),
+                    "Spain": (["es", "madrid", "barcelona", "spain"], "CET (GMT+1)"),
+                    "Netherlands": (["nl", "amsterdam", "dutch"], "CET (GMT+1)"),
+                    "Saudi Arabia": (["sa", "riyadh", "saudi"], "AST (GMT+3)"),
+                    "Singapore": (["sg", "singapore", "merlion"], "SGT (GMT+8)"),
+                    "New Zealand": (["nz", "kiwi", "auckland"], "NZST (GMT+12)"),
+                    "South Africa": (["za", "capetown", "joburg"], "SAST (GMT+2)")
+                }
+
+                country = "United States (US)"
+                timezone = "EST (GMT-5)"
+
+                for c_name, (keywords, tz) in country_map.items():
+                    if any(k in u_lower for k in keywords):
+                        country = c_name
+                        timezone = tz
+                        break
                     
                 print(f"{GREEN}Estimated Country:{RESET} {country}")
                 print(f"{GREEN}Network Local Time:{RESET} {timezone}")
@@ -160,6 +177,7 @@ def display_menu():
                 print(f"{GREEN}Address Location:{RESET} {mock_addr}")
                 print(f"{GREEN}Country Origin:{RESET} {mock_country}")
                 print(f"{PURPLE}---------------------------------{RESET}")
+
             # --- OPTION 5: DNS RECORDS LOOKUP ---
             elif option == "05" or option == "5":
                 domain_input = input("Domain: ")

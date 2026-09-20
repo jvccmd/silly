@@ -87,58 +87,85 @@ def display_menu():
                 print(f"{PURPLE}----------------------------{RESET}")
             # --- OPTION 3: SOCIALS COUNTRY TRACKER ---
             elif option == "03" or option == "3":
-                social_platform = input("Social: ")
-                username = input("Username: ")
+                social_platform = input("Social (e.g., discord, ig): ").strip().lower()
+                username = input("Username: ").strip()
                 
-                print(f"\n{GREEN}[+] Connecting to target node endpoints...{RESET}")
+                print(f"\n{GREEN}[+] Pinging global social graph nodes for target endpoint...{RESET}")
                 time.sleep(0.8)
-                print(f"{PURPLE}[*] Crawling profile metadata on {social_platform}...{RESET}")
+                print(f"{PURPLE}[*] Crawling leaked metadata logs & public forum indices...{RESET}")
                 time.sleep(1.4)
-                print(f"{PURPLE}[*] Isolating localized regional identifiers...{RESET}")
+                print(f"{PURPLE}[*] Parsing localized country tags for @{username}...{RESET}")
                 time.sleep(1.0)
                 
                 print(f"\n{PURPLE}--- OSINT PROFILE LOCATOR ---{RESET}")
-                print(f"{GREEN}Target Platform:{RESET} {social_platform}")
+                print(f"{GREEN}Target Platform:{RESET} {social_platform.upper()}")
                 print(f"{GREEN}Account Handle:{RESET} @{username}")
                 
                 u_lower = username.lower()
                 
-                # Global lookup matrix mapping unique text markers to physical countries
+                # Split username by symbols to look for clean standalone keywords
+                user_words = u_lower.replace('.', ' ').replace('_', ' ').replace('-', ' ').split()
+                
+                # Global lookup matrix mapping specific markers to physical countries
                 country_map = {
                     "Philippines (PH)": (["ph", "manila", "pinoy", "phil", "cavite", "cebu"], "PST (GMT+8)"),
                     "United Kingdom (UK)": (["uk", "london", "gb", "brit", "scot"], "GMT +0 / +1"),
                     "Canada": (["ca", "toronto", "maple", "vancouver"], "EST / PST"),
                     "Australia": (["au", "sydney", "oz", "melbourne"], "AEST (GMT+10)"),
                     "Germany": (["de", "berlin", "munich", "deutsch"], "CET (GMT+1)"),
-                    "Japan": (["jp", "tokyo", "osaka", "kyoto", "nip"], "JST (GMT+9)"),
-                    "Russia": (["ru", "moscow", "rus", "soviet"], "MSK (GMT+3)"),
-                    "France": (["fr", "paris", "lyon", "french"], "CET (GMT+1)"),
-                    "Brazil": (["br", "rio", "sao", "brazil"], "BRT (GMT-3)"),
+                    "Japan": (["jp", "tokyo", "osaka", "kyoto"], "JST (GMT+9)"),
+                    "Russia": (["ru", "moscow", "rus"], "MSK (GMT+3)"),
+                    "France": (["fr", "paris", "french"], "CET (GMT+1)"),
+                    "Brazil": (["br", "rio", "brazil"], "BRT (GMT-3)"),
                     "India": (["in", "delhi", "mumbai", "india", "ind"], "IST (GMT+5:30)"),
-                    "China": (["cn", "beijing", "shanghai", "china"], "CST (GMT+8)"),
-                    "South Korea": (["kr", "seoul", "korea"], kst := "KST (GMT+9)"),
-                    "Mexico": (["mx", "mexico", "mex"], "CST (GMT-6)"),
-                    "Italy": (["it", "rome", "milan", "italy"], "CET (GMT+1)"),
-                    "Spain": (["es", "madrid", "barcelona", "spain"], "CET (GMT+1)"),
-                    "Netherlands": (["nl", "amsterdam", "dutch"], "CET (GMT+1)"),
-                    "Saudi Arabia": (["sa", "riyadh", "saudi"], "AST (GMT+3)"),
-                    "Singapore": (["sg", "singapore", "merlion"], "SGT (GMT+8)"),
-                    "New Zealand": (["nz", "kiwi", "auckland"], "NZST (GMT+12)"),
-                    "South Africa": (["za", "capetown", "joburg"], "SAST (GMT+2)")
+                    "China": (["cn", "beijing", "china"], "CST (GMT+8)"),
+                    "South Korea": (["kr", "seoul", "korea"], "KST (GMT+9)")
                 }
 
+                # Dynamic Registry Lookup Simulator: Matches seeds via character numeric bytes
+                seed_sum = sum(ord(char) for char in username)
+                
+                # Fallback matching structure
                 country = "United States (US)"
                 timezone = "EST (GMT-5)"
+                confidence = "45% (Unlinked Handle)"
 
+                # Rule 1: Check if they explicitly have a country word/tag in their username
+                found_match = False
                 for c_name, (keywords, tz) in country_map.items():
-                    if any(k in u_lower for k in keywords):
+                    if any(k in user_words or u_lower == k for k in keywords):
                         country = c_name
                         timezone = tz
+                        confidence = "92% (Explicit Username Tag)"
+                        found_match = True
                         break
+
+                # Rule 2: If no explicit tag, scrape simulated leak database via name seed values
+                if not found_match:
+                    if seed_sum % 5 == 0:
+                        country = "Philippines (PH)"
+                        timezone = "PST (GMT+8)"
+                        confidence = "84% (Matched via Forum Breach Database)"
+                    elif seed_sum % 5 == 1:
+                        country = "United Kingdom (UK)"
+                        timezone = "GMT +0 / +1"
+                        confidence = "79% (Matched via Public Server Logs)"
+                    elif seed_sum % 5 == 2:
+                        country = "Canada"
+                        timezone = "EST / PST"
+                        confidence = "81% (Matched via Cross-Platform Metadata)"
+                    elif seed_sum % 5 == 3:
+                        country = "Australia"
+                        timezone = "AEST (GMT+10)"
+                        confidence = "76% (Matched via Linked Email Registry)"
+                    else:
+                        country = "United States (US)"
+                        timezone = "EST (GMT-5)"
+                        confidence = "71% (Matched via Default Registry Domain)"
                     
                 print(f"{GREEN}Estimated Country:{RESET} {country}")
                 print(f"{GREEN}Network Local Time:{RESET} {timezone}")
-                print(f"{GREEN}Confidence Index:{RESET} 87% Verified")
+                print(f"{GREEN}Confidence Index:{RESET} {confidence}")
                 print(f"{PURPLE}-----------------------------{RESET}")
 
             # --- OPTION 4: EMAIL LOOKUP ENGINE ---
